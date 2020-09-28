@@ -1,0 +1,106 @@
+
+#Limpieza de data LenguaMaterna
+
+Extraemos la data LENGUA MATERNA - LEN
+```{r}
+LinkLEN ='https://github.com/DanielaAnicama/BasesDeDatosTrabajoFinal/blob/master/LenguaMaterna.xlsx?raw=true'
+LEN = import(LinkLEN)
+```
+Eliminamos las columnas y filas innecesarias
+```{r}
+LEN=LEN[-c(1:7),]
+LEN$'Área Geográfica'=NULL
+LEN=LEN[-c(197:202),] #OBSERVACIÓN
+```
+
+Cambiamos el nombre de las columnas
+```{r}
+names(LEN)[1]='Provincia'
+names(LEN)[2]='Quechua'
+names(LEN)[3]='Aimara'
+names(LEN)[4]='Ashaninka'
+names(LEN)[5]='AwajúnAguaruna'
+names(LEN)[6]='ShipiboKonibo'
+names(LEN)[7]='ShawiChayahuita'
+names(LEN)[8]='Matsigenka'
+names(LEN)[9]='Achuar'
+names(LEN)[10]='OtraLenguaNativa'
+names(LEN)[11]='Castellano'
+names(LEN)[12]='Portugues'
+names(LEN)[13]='OtraLenguaExtranjera'
+names(LEN)[14]='LenguajeSeñas'
+names(LEN)[15]='NoEscuchaNiHabla'
+names(LEN)[16]='Wampis'
+names(LEN)[17]='Kichwa'
+names(LEN)[18]='Nomatsigenga'
+names(LEN)[19]='Tikuna'
+names(LEN)[20]='Urarina'
+names(LEN)[21]='Yine'
+names(LEN)[22]='Yanesha'
+names(LEN)[23]='KandoziChapra'
+names(LEN)[24]='Kakataibo'
+names(LEN)[25]='Matses'
+names(LEN)[26]='KukamaKukamiria'
+names(LEN)[27]='Yagua'
+names(LEN)[28]='Secoya'
+names(LEN)[29]='Harakbut'
+names(LEN)[30]='Yaminahua'
+names(LEN)[31]='Jaqaru'
+names(LEN)[32]='MuruiMuinani'
+names(LEN)[33]='Kakinte'
+names(LEN)[34]='Amahuaca'
+names(LEN)[35]='Arabela'
+names(LEN)[36]='Nahua'
+names(LEN)[37]='EseEja'
+names(LEN)[38]='Capanahua'
+names(LEN)[39]='Maijuna'
+names(LEN)[40]='Ocaina'
+names(LEN)[41]='Sharanahua'
+names(LEN)[42]='Cauqui'
+names(LEN)[43]='Shiwilu'
+names(LEN)[44]='Cashinahua'
+names(LEN)[45]='Isconahua'
+names(LEN)[46]='Omagua'
+names(LEN)[47]='NoSabeNoResponde'
+names(LEN)[48]='Total'
+```
+
+Usamos el codigo str_split para dividir la columna Provincia, usando como patrón los dos puntos (:)
+```{r}
+str_split(string = LEN$Provincia,
+          pattern = ':',
+          simplify=T)
+LEN$Provincia=str_split(string = LEN$Provincia,
+          pattern = ':',
+          simplify=T)[,2] #columna 2 de provincia que es la provincia, la columna 1 es el departamento
+LEN$Provincia
+```
+
+Eliminamos los espacios en blanco hallados en los nombres de la columna Provincia. Además, reemplazamos los guiones (-) por el numero 0
+```{r}
+gsub(' ',"",LEN$Provincia)
+LEN$Provincia = gsub(' ',"",LEN$Provincia)
+```
+
+Convertir a numerica
+```{r}
+LEN[,c(2:48)]=lapply(LEN[,c(2:48)],as.numeric)
+```
+
+Añadimos nombre a las columnas restantes
+```{r}
+LEN[145,1]="Manu"
+LEN[146,1]="Tahuamanu"
+LEN[147,1]="Tambopata"
+LEN[162,1]="Callao"
+```
+
+Es necesario eliminar la columna "Total" de LEN para el MERGE FINAL
+```{r}
+LEN$Total=NULL
+```
+
+EXPORTAR DATA
+```{r}
+export(LEN,"LENLIMPIA.xlsx")
+```
